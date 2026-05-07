@@ -6,3 +6,4 @@ langchain-chroma
 python-dotenv
 openai
 tiktoken
+langchain-text-splitters
