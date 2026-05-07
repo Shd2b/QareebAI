@@ -32,10 +32,7 @@ for doc in documents:
 print(f"✅ Created {len(chunks)} chunks")
 
 #  تحويل إلى مستندات
-processed_chunks = [
-    Document(chunk)
-    for chunk in chunks
-]
+processed_chunks = chunks
 
 print(f"✅ Created {len(processed_chunks)} documents")
 
@@ -45,10 +42,10 @@ embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
 # إنشاء DB
 print("🚀 Creating vector store...")
 
-Chroma.from_documents(
-    documents=processed_chunks,
+db = Chroma.from_texts(
+    texts=processed_chunks,
     embedding=embedding_model,
-    persist_directory="dbv1/chroma_db"
+    persist_directory=PERSIST_DIR
 )
 
 print("✅ DB created successfully!")

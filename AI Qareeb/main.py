@@ -48,13 +48,10 @@ if not os.path.exists(PERSIST_DIR):
 
     print(f"Created {len(chunks)} chunks")
 
-    processed_chunks = [
-        Document(chunk)
-        for chunk in chunks
-    ]
+    processed_chunks = chunks
 
-    db = Chroma.from_documents(
-        documents=processed_chunks,
+    db = Chroma.from_texts(
+        texts=processed_chunks,
         embedding=embedding_model,
         persist_directory=PERSIST_DIR
     )
