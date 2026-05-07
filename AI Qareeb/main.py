@@ -49,7 +49,7 @@ if not os.path.exists(PERSIST_DIR):
     print(f"Created {len(chunks)} chunks")
 
     processed_chunks = [
-        Document(page_content=chunk, metadata={"source": "txt"})
+        Document(chunk, metadata={"source": "txt"})
         for chunk in chunks
     ]
 
