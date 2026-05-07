@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-os.environ["OPENAI_API_KEY"] = ""  
+os.environ["OPENAI_API_KEY"] = "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"   
 
 app = FastAPI()
 
@@ -21,7 +21,7 @@ class QuestionRequest(BaseModel):
 
 @app.post("/ask")
 def ask_question(request: QuestionRequest):
-    retriever = db.as_retriever(search_kwargs={"k": 3})
+    retriever = db.as_retriever(search_kwargs={"k": 5})
     results = retriever.invoke(request.question)
     context = "\n\n".join([doc.page_content for doc in results])
 
@@ -29,12 +29,12 @@ def ask_question(request: QuestionRequest):
     prompt = f"""أنت مساعد إسعافات أولية متخصص.
 اعتمد فقط على المعلومات الموجودة في الوثائق.
 
-
 القواعد:
 - أجب باللغة العربية فقط
 - استخدم خطوات مرقمة
 - كن واضحاً ومباشراً
 - لا تضف معلومات من خارج البيانات
+- اذا لم تذكر الفئة العمرية في البيانات قدم الاسعافات لجميع الفئات العمرية
 
 الوثائق:
 {context}
@@ -42,6 +42,5 @@ def ask_question(request: QuestionRequest):
 السؤال: {request.question}
 
 الجواب:"""
-
     response = llm.invoke(prompt)
     return {"answer": response.content}
