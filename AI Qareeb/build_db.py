@@ -33,7 +33,7 @@ print(f"✅ Created {len(chunks)} chunks")
 
 #  تحويل إلى مستندات
 processed_chunks = [
-    Document(chunk, metadata={"source": "txt"})
+    Document(chunk)
     for chunk in chunks
 ]
 
