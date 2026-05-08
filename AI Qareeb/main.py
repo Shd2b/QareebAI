@@ -8,11 +8,10 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-os.environ["OPENAI_API_KEY"] = "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"   
 
 app = FastAPI()
 
-PERSIST_DIR = "dbv1/chroma_db"
+PERSIST_DIR = "/tmp/chroma_db"
 
 # تحميل ملفات الاسعافات الأولية
 def load_txt_files(folder_path):
@@ -70,12 +69,13 @@ class QuestionRequest(BaseModel):
 
 @app.post("/ask")
 def ask_question(request: QuestionRequest):
-    retriever = db.as_retriever(search_kwargs={"k": 5})
-    results = retriever.invoke(request.question)
-    context = "\n\n".join([doc.page_content for doc in results])
+    try:
+        retriever = db.as_retriever(search_kwargs={"k": 5})
+        results = retriever.invoke(request.question)
+        context = "\n\n".join([doc.page_content for doc in results])
 
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
-    prompt = f"""أنت مساعد إسعافات أولية متخصص.
+        llm = ChatOpenAI(model="gpt-4o", temperature=0)
+        prompt = f"""أنت مساعد إسعافات أولية متخصص.
 اعتمد فقط على المعلومات الموجودة في الوثائق.
 
 القواعد:
@@ -91,5 +91,8 @@ def ask_question(request: QuestionRequest):
 السؤال: {request.question}
 
 الجواب:"""
-    response = llm.invoke(prompt)
-    return {"answer": response.content}
+        response = llm.invoke(prompt)
+        return {"answer": response.content}
+
+    except Exception as e:
+        return {"error": str(e)}
