@@ -1,5 +1,6 @@
 from xml.dom.minidom import Document
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pydantic import BaseModel
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -10,6 +11,13 @@ import os
 load_dotenv()
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 PERSIST_DIR = "/tmp/chroma_db"
 
@@ -35,6 +43,12 @@ if not os.path.exists(PERSIST_DIR):
     DOCS_PATH = os.path.join(BASE_DIR, "docs")
 
     documents = load_txt_files(DOCS_PATH)
+    print("📂 DOCS PATH:", DOCS_PATH)
+
+    if os.path.exists(DOCS_PATH):
+        print("📄 FILES:", os.listdir(DOCS_PATH))
+    else:
+        print("❌ DOCS FOLDER NOT FOUND")
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1200,
